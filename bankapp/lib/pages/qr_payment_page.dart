@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -703,6 +702,7 @@ class _PaymentConfirmationPageState extends State<PaymentConfirmationPage> {
         'sender_id': senderUserId,
         'type': 'debit',
         'description': 'QR Payment from ${receiverName}',
+        'user_id': senderUserId,
         'receiver_id': receiverId,
         'sender_name': senderName,
         'receiver_name': receiverName,
@@ -719,6 +719,7 @@ class _PaymentConfirmationPageState extends State<PaymentConfirmationPage> {
         'sender_id': senderUserId,
         'type': 'credit',
         'sender_name': senderName,
+        'user_id': receiverId,
         'receiver_name': receiverName,
         'description': 'QR Payment to ${senderName}',
         'amount': amount,

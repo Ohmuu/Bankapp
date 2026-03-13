@@ -1,10 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class TransactionHistorySection extends StatelessWidget {
   const TransactionHistorySection({super.key});
+  Stream<QuerySnapshot> getTransactions(String uid) {
+    return FirebaseFirestore.instance
+        .collection('transactions')
+        .where('user_id', isEqualTo: uid)
+        .limit(5)
+        .snapshots();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return SizedBox.shrink();
+    }
+
     return Container(
       color: Colors.white,
       margin: EdgeInsets.only(top: 4),
@@ -14,7 +28,71 @@ class TransactionHistorySection extends StatelessWidget {
           children: [
             buildSectionHeader(context),
             SizedBox(height: 10),
-            Column(children: List.generate(5, (index) => TransactionRow())),
+            StreamBuilder<QuerySnapshot>(
+              stream: getTransactions(user.uid),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Column(
+                    children: List.generate(
+                      3,
+                      (index) => const TransactionRowSkeleton(),
+                    ),
+                  );
+                }
+
+                if (snapshot.hasError) {
+                  print('Transaction Error: ${snapshot.error}');
+                  return Padding(
+                    padding: EdgeInsets.only(top: 16),
+                    child: Column(
+                      children: [
+                        Icon(Icons.error, color: Colors.grey, size: 50),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Error loading transactions',
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Padding(
+                    padding: EdgeInsets.only(top: 16),
+                    child: Column(
+                      children: [
+                        Icon(Icons.info, color: Colors.grey, size: 50),
+                        const SizedBox(height: 16),
+                        Text(
+                          'No transactions found',
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                final transactions = snapshot.data!.docs;
+
+                return Column(
+                  children: transactions.take(5).map((doc) {
+                    final data = doc.data() as Map<String, dynamic>;
+                    return TransactionRow(
+                      transaction: doc.id,
+                      data: data['type'] ?? 'debit',
+                      amount: (data['amount'] ?? 0).toDouble(),
+                      timestamp: data['timestamp'] as Timestamp?,
+                      description: data['description'] ?? 'Transaction',
+                      category: data['category'] ?? 'general',
+                      note: data['note'],
+                      recipient: data['receiver_name'],
+                      userId: data['user_id'],
+                    );
+                  }).toList(),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -44,9 +122,97 @@ Widget buildSectionHeader(BuildContext context) {
   );
 }
 
-//Single transaction row with skeleton loading effect
 class TransactionRow extends StatelessWidget {
-  const TransactionRow({super.key});
+  final String transaction;
+  final String data;
+  final double amount;
+  final Timestamp? timestamp;
+  final String description;
+  final String category;
+  final String? note;
+  final String? recipient;
+  final String? userId;
+
+  const TransactionRow({
+    required this.transaction,
+    required this.data,
+    required this.amount,
+    required this.timestamp,
+    required this.description,
+    required this.category,
+    required this.note,
+    required this.recipient,
+    required this.userId,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDebit = data == 'debit';
+    final icon = isDebit ? Icons.arrow_upward : Icons.arrow_downward;
+    final color = isDebit ? Colors.red : Colors.green;
+    final amountText = isDebit
+        ? '- ${amount.toStringAsFixed(2)}'
+        : '+ ${amount.toStringAsFixed(2)}';
+    final amountColor = isDebit ? Colors.red : Colors.green;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        children: [
+          buildIcon(icon, color),
+          SizedBox(width: 15),
+          buildDetail(description, category),
+          Spacer(),
+          Text(
+            amountText,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: amountColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildIcon(IconData icon, Color color) {
+    return Container(
+      padding: EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            blurRadius: 10,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Icon(icon, color: color, size: 24),
+    );
+  }
+
+  Widget buildDetail(String title, String subtitle) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          Text(subtitle, style: TextStyle(fontSize: 14, color: Colors.grey)),
+        ],
+      ),
+    );
+  }
+}
+
+//Single transaction row with skeleton loading effect
+class TransactionRowSkeleton extends StatelessWidget {
+  const TransactionRowSkeleton();
   @override
   Widget build(BuildContext context) {
     return Row(

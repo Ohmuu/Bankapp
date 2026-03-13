@@ -2,7 +2,6 @@ import 'package:bankapp/components/action_grid.dart';
 import 'package:bankapp/components/bank_card.dart';
 import 'package:bankapp/components/header_section.dart';
 import 'package:bankapp/components/transaction_history_section.dart';
-import 'package:bankapp/pages/qr_payment_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

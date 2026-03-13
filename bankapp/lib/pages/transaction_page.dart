@@ -19,12 +19,7 @@ class _TransactionPageState extends State<TransactionPage> {
   Stream<QuerySnapshot> getTransactions(String uid) {
     Query<Map<String, dynamic>> query = FirebaseFirestore.instance
         .collection('transactions')
-        .where(
-          Filter.or(
-            Filter('sender_id', isEqualTo: uid),
-            Filter('receiver_id', isEqualTo: uid),
-          ),
-        );
+        .where('user_id', isEqualTo: uid);
     if (filterType != 'all') {
       query = query.where('type', isEqualTo: filterType);
     }
@@ -420,7 +415,10 @@ class TransactionCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: Text('Close'),
+                    child: Text(
+                      'Close',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
                 ),
               ],
