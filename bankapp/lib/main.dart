@@ -1,7 +1,9 @@
 import 'package:bankapp/components/auth_screen.dart';
 import 'package:bankapp/firebase_options.dart';
+import 'package:bankapp/pages/account_page.dart';
 import 'package:bankapp/pages/home_page.dart';
 import 'package:bankapp/pages/qr_payment_page.dart';
+import 'package:bankapp/pages/security_page.dart';
 import 'package:bankapp/pages/transaction_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -25,7 +27,11 @@ class MyApp extends StatelessWidget {
       routes: {
         '/home_page': (context) => HomePage(),
         '/qr_payment_page': (context) => QrPaymentPage(),
-        '/transaction_page': (context) => TransactionPage(),
+        '/transaction_page': (context) => TransactionPage(
+          transactionId: 'TXN ${DateTime.now().millisecondsSinceEpoch}_sender',
+        ),
+        '/account_page': (context) => AccountPage(),
+        '/security_page': (context) => SecurityPage(),
       },
     );
   }

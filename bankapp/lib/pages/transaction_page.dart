@@ -1,4 +1,5 @@
 import 'package:bankapp/pages/qr_payment_page.dart';
+import 'package:bankapp/pages/transaction_receipt.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,7 +8,7 @@ import 'package:intl/intl.dart';
 class TransactionPage extends StatefulWidget {
   final Color darkBlue = Color(0xFF16213E);
   final Color darkPurple = Color(0xFF533483);
-  TransactionPage({super.key});
+  TransactionPage({super.key, required String transactionId});
 
   @override
   State<TransactionPage> createState() => _TransactionPageState();
@@ -35,7 +36,7 @@ class _TransactionPageState extends State<TransactionPage> {
         child: Scaffold(
           appBar: AppBar(
             title: Text("Transactions History"),
-            backgroundColor: widget.darkBlue,
+            backgroundColor: widget.darkPurple,
             foregroundColor: Colors.white,
           ),
           body: Center(child: Text("No user logged in")),
@@ -47,7 +48,7 @@ class _TransactionPageState extends State<TransactionPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text("Transactions History"),
-          backgroundColor: widget.darkBlue,
+          backgroundColor: widget.darkPurple,
           foregroundColor: Colors.white,
         ),
         body: Column(
@@ -402,24 +403,71 @@ class TransactionCard extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 16),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: darkPurple,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+
+                //close and share button
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(color: darkPurple),
+                          ),
+                        ),
+                        child: Text(
+                          'Close',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
-                    child: Text(
-                      'Close',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    SizedBox(width: 16),
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => TransactionReceipt(
+                                transactionId: transaction,
+                                type: data,
+                                amount: amount,
+                                timestamp: timestamp,
+                                description: description,
+                                category: category,
+                                note: note,
+                                recipient: recipient,
+                                sender: sender,
+                              ),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: darkPurple,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.share),
+                            SizedBox(width: 8),
+                            Text(
+                              'Share',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ],
             ),

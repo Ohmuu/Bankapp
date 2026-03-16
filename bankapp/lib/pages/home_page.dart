@@ -41,6 +41,7 @@ class _HomePageState extends State<HomePage> {
         });
         break;
       case 4:
+        Navigator.pushNamed(context, '/account_page');
         setState(() {
           _currentIndex = index;
         });

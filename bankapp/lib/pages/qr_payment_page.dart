@@ -1,3 +1,4 @@
+import 'package:bankapp/pages/transaction_receipt.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -53,7 +54,7 @@ class _QrPaymentPageState extends State<QrPaymentPage>
         // Navigator.pushNamed(context, '/apply_page');
         break;
       case 4:
-        // Navigator.pushNamed(context, '/more_page');
+        Navigator.pushNamed(context, '/account_page');
         break;
     }
   }
@@ -64,7 +65,7 @@ class _QrPaymentPageState extends State<QrPaymentPage>
       child: Scaffold(
         appBar: AppBar(
           title: Text("QR Payment"),
-          backgroundColor: darkBlue,
+          backgroundColor: darkPurple,
           foregroundColor: Colors.white,
           bottom: TabBar(
             controller: _tabController,
@@ -180,14 +181,14 @@ class _GenerateQrCodeState extends State<GenerateQrCode> {
       ),
       child: Center(
         child: isLoading
-            ? CircularProgressIndicator(color: darkBlue)
+            ? CircularProgressIndicator(color: darkPurple)
             : SingleChildScrollView(
                 child: Column(
                   children: [
                     Icon(
                       Icons.account_circle_rounded,
                       size: 100,
-                      color: darkBlue,
+                      color: darkPurple,
                     ),
                     FutureBuilder<Map<String, dynamic>?>(
                       future: getUserData(),
@@ -198,7 +199,7 @@ class _GenerateQrCodeState extends State<GenerateQrCode> {
                           style: TextStyle(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
-                            color: darkBlue,
+                            color: darkPurple,
                           ),
                         );
                       },
@@ -228,6 +229,7 @@ class _GenerateQrCodeState extends State<GenerateQrCode> {
                           ),
                         ],
                       ),
+                      //QrCode
                       child: qrData != null
                           ? QrImageView(
                               data: qrData!,
@@ -235,10 +237,10 @@ class _GenerateQrCodeState extends State<GenerateQrCode> {
                               version: QrVersions.auto,
                               eyeStyle: QrEyeStyle(
                                 eyeShape: QrEyeShape.square,
-                                color: darkBlue,
+                                color: Colors.black87,
                               ),
                               dataModuleStyle: QrDataModuleStyle(
-                                color: darkBlue,
+                                color: Colors.black87,
                               ),
                             )
                           : SizedBox(
@@ -270,7 +272,7 @@ class _GenerateQrCodeState extends State<GenerateQrCode> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.info, color: darkBlue),
+                          Icon(Icons.info, color: darkPurple),
                           SizedBox(width: 10),
                           Text(
                             'Scan QR Code to make payment',
@@ -382,7 +384,7 @@ class _ScanQrTabState extends State<ScanQrTab> {
           decoration: BoxDecoration(
             color: Colors.transparent,
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: darkBlue, width: 2),
+            border: Border.all(color: darkPurple, width: 2),
           ),
           child: Column(
             children: [
@@ -500,11 +502,11 @@ class _ScanQrTabState extends State<ScanQrTab> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.qr_code, color: darkBlue),
+                    Icon(Icons.qr_code, color: darkPurple),
                     Text(
                       "Scan QR Code to pay",
                       style: TextStyle(
-                        color: darkBlue,
+                        color: darkPurple,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
@@ -525,12 +527,12 @@ class _ScanQrTabState extends State<ScanQrTab> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      CircularProgressIndicator(color: darkBlue),
+                      CircularProgressIndicator(color: darkPurple),
                       SizedBox(width: 10),
                       Text(
                         "Processing...",
                         style: TextStyle(
-                          color: darkBlue,
+                          color: darkPurple,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -637,7 +639,23 @@ class _PaymentConfirmationPageState extends State<PaymentConfirmationPage> {
           backgroundColor: Colors.green,
         ),
       );
-      Navigator.pop(context, true);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TransactionReceipt(
+            transactionId:
+                'TXN ${DateTime.now().millisecondsSinceEpoch}_sender',
+            type: 'debit',
+            amount: amount,
+            timestamp: Timestamp.fromDate(DateTime.now()),
+            description: _noteController.text,
+            category: 'Payment',
+            note: _noteController.text,
+            recipient: widget.receiverName,
+            sender: user.displayName,
+          ),
+        ),
+      );
     } catch (e) {
       setState(() {
         isProcessing = false;
@@ -743,7 +761,7 @@ class _PaymentConfirmationPageState extends State<PaymentConfirmationPage> {
             'Confirm Payment',
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
-          backgroundColor: darkBlue,
+          backgroundColor: darkPurple,
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () => Navigator.pop(context),
@@ -886,8 +904,8 @@ class _PaymentConfirmationPageState extends State<PaymentConfirmationPage> {
                   child: ElevatedButton(
                     onPressed: isProcessing ? null : _confirmPayment,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: darkBlue,
-                      disabledBackgroundColor: darkBlue.withOpacity(0.5),
+                      backgroundColor: darkPurple,
+                      disabledBackgroundColor: darkPurple.withOpacity(0.5),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -916,8 +934,8 @@ class _PaymentConfirmationPageState extends State<PaymentConfirmationPage> {
                   child: ElevatedButton(
                     onPressed: () => Navigator.pop(context),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: darkBlue,
-                      disabledBackgroundColor: darkBlue.withOpacity(0.5),
+                      backgroundColor: darkPurple,
+                      disabledBackgroundColor: darkPurple.withOpacity(0.5),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),

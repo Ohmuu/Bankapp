@@ -30,10 +30,10 @@ class CustomNavbar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildNavItem(Icons.home, "Home", 0),
-              _buildNavItem(Icons.account_balance, "Account", 1),
+              _buildNavItem(Icons.analytics_outlined, "Analytics", 1),
               const SizedBox(width: 40),
-              _buildNavItem(Icons.folder, "Apply", 3),
-              _buildNavItem(Icons.more_horiz, "More", 4),
+              _buildNavItem(Icons.credit_card, "Card", 3),
+              _buildNavItem(Icons.person, "Account", 4),
             ],
           ),
         ),
