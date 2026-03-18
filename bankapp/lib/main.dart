@@ -1,6 +1,7 @@
 import 'package:bankapp/components/auth_screen.dart';
 import 'package:bankapp/firebase_options.dart';
 import 'package:bankapp/pages/account_page.dart';
+import 'package:bankapp/pages/change_password_page.dart';
 import 'package:bankapp/pages/home_page.dart';
 import 'package:bankapp/pages/qr_payment_page.dart';
 import 'package:bankapp/pages/security_page.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         ),
         '/account_page': (context) => AccountPage(),
         '/security_page': (context) => SecurityPage(),
+        '/change_password_page': (context) => ChangePasswordPage(),
       },
     );
   }

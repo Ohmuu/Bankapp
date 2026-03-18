@@ -115,7 +115,7 @@ class AccountContent extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(12),
+              shape: BoxShape.circle,
             ),
             child: IconButton(icon: Icon(Icons.grid_view), onPressed: () {}),
           ),

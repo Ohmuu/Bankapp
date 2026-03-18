@@ -6,8 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 class TransactionPage extends StatefulWidget {
-  final Color darkBlue = Color(0xFF16213E);
   final Color darkPurple = Color(0xFF533483);
+  final Color whitePurple = Color(0xFF6F61C2);
   TransactionPage({super.key, required String transactionId});
 
   @override
